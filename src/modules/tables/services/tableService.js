@@ -1,6 +1,12 @@
 import api from "../../../shared/services/apiClient";
 
-export const getTables        = async ()         => (await api.get("/tables")).data;
+// export const getTables        = async ()         => (await api.get("/tables")).data;
+export const getTables = async (description = "") =>
+  (await api.get("/tables/config", {
+    params: description.trim()
+      ? { description: description.trim() }
+      : {}
+  })).data;
 export const createTable      = async (data)     => (await api.post("/tables", data)).data;
 export const updateTable      = async (id, data) => (await api.put(`/tables/${id}`, data)).data;
 export const deleteTable      = async (id)       => (await api.delete(`/tables/${id}`)).data;

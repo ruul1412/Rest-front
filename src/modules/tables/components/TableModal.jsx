@@ -4,13 +4,14 @@ import { X } from "lucide-react";
 export default function TableModal({ table, onSave, onClose }) {
   const [number,   setNumber]   = useState(table?.number   ?? "");
   const [capacity, setCapacity] = useState(table?.capacity ?? "");
+  const [description, setDescription] = useState(table?.description ?? "");
   const [saving,   setSaving]   = useState(false);
 
   const handleSubmit = async () => {
     if (!number || !capacity) return;
     setSaving(true);
     try {
-      await onSave({ number: Number(number), capacity: Number(capacity) });
+      await onSave({ number: Number(number), capacity: Number(capacity), description : description });
     } finally {
       setSaving(false);
     }
@@ -41,6 +42,20 @@ export default function TableModal({ table, onSave, onClose }) {
               placeholder="Ej: 5"
             />
           </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">
+              Descripción
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="Ej: Terraza"
+            />
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase mb-1 block">
               Capacidad (personas)
