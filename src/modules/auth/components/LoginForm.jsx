@@ -22,7 +22,8 @@ export default function LoginForm() {
       const redirect = getRedirectByRole(user.role_code);  // role_code = "admin" | "mesero" | ...
       navigate(redirect);
     } catch (err) {
-      setError(err.response?.data?.detail || "Credenciales inválidas");
+      const message = err.response?.data?.detail || err.response?.data?.message || err.response?.data?.errors?.[0] || "Credenciales inválidas";
+      setError(message);
     } finally {
       setLoading(false);
     }
