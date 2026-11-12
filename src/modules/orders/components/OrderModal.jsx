@@ -480,7 +480,8 @@ export default function OrderModal({ group, menu, products, categories, tables, 
       });
       onClose();
     } catch (e) {
-      setError(e.response?.data?.detail ?? "Error al registrar la orden");
+      const message = e.response?.data?.detail ?? e.response?.data?.message ?? e.response?.data?.errors?.[0] ?? "Error al registrar la orden";
+      setError(message);
     } finally { setSaving(false); }
   };
 

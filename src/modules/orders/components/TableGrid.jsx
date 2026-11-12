@@ -70,8 +70,11 @@ function LlevarModal({ tables, onSelect, onClose }) {
 export default function TableGrid({ tables, groups, onTableClick, onLlevarClick, canCreate }) {
   const [showLlevarModal, setShowLlevarModal] = useState(false);
 
+  const safeTables = Array.isArray(tables) ? tables : tables?.items ?? [];
+  const safeGroups = Array.isArray(groups) ? groups : groups?.items ?? [];
+
   const getGroupForTable = (tableId) =>
-    groups.find(g => g.table_id === tableId && g.status === "abierto") ?? null;
+    safeGroups.find(g => g.table_id === tableId && g.status === "abierto") ?? null;
 
   const handleLlevarSelect = (table) => {
     setShowLlevarModal(false);
@@ -84,7 +87,7 @@ export default function TableGrid({ tables, groups, onTableClick, onLlevarClick,
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
 
         {/* Tarjetas de mesas */}
-        {tables.map(table => {
+        {safeTables.map(table => {
           const group = getGroupForTable(table.id);
           const st    = STATUS[table.status] ?? STATUS.libre;
 
@@ -136,7 +139,7 @@ export default function TableGrid({ tables, groups, onTableClick, onLlevarClick,
       {/* Mini-modal de selección de mesa para llevar */}
       {showLlevarModal && (
         <LlevarModal
-          tables={tables.filter(t => t.status !== "reservada")}
+          tables={safeTables.filter(t => t.status !== "reservada")}
           onSelect={handleLlevarSelect}
           onClose={() => setShowLlevarModal(false)}
         />

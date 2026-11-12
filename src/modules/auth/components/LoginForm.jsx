@@ -125,7 +125,8 @@ export default function LoginForm() {
       const user = await login(email, password);
       navigate(getRedirectByRole(user.role_code));
     } catch (err) {
-      setError(err.response?.data?.detail || "Credenciales inválidas");
+      const message = err.response?.data?.detail || err.response?.data?.message || err.response?.data?.errors?.[0] || "Credenciales inválidas";
+      setError(message);
     } finally {
       setLoading(false);
     }

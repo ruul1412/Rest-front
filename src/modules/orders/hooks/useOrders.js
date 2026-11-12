@@ -21,14 +21,19 @@ export function useOrders() {
       // todas las mesas activas sin importar la fecha, y "cerrado" ya viene
       // acotado al día de hoy desde el propio backend. Si se pide todo junto
       // sin status, el backend no filtra nada y devuelve el historial completo.
-      const [abiertos, cerrados, t, p, c] = await Promise.all([
+      const [abiertos, cerrados, tableResp, productResp, categoryResp] = await Promise.all([
         getGroups("abierto"), getGroups("cerrado"),
         getTables(), getProducts(), getCategories(),
       ]);
+
+      const normalizedTables = Array.isArray(tableResp) ? tableResp : tableResp?.items ?? [];
+      const normalizedProducts = Array.isArray(productResp) ? productResp : productResp?.items ?? [];
+      const normalizedCategories = Array.isArray(categoryResp) ? categoryResp : categoryResp?.items ?? [];
+
       setGroups([...abiertos, ...cerrados]);
-      setTables(t);
-      setProducts(p);
-      setCategories(c);
+      setTables(normalizedTables);
+      setProducts(normalizedProducts);
+      setCategories(normalizedCategories);
       try { setMenu(await getMenuToday()); } catch { setMenu(null); }
     } catch (e) {
       console.error(e);

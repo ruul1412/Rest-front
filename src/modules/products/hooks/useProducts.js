@@ -3,32 +3,86 @@ import { getProducts, getProductTypes, createProduct, updateProduct, deleteProdu
 import { getCategories } from "../../categories/services/categoryService";
 
 export function useProducts() {
-  const [products,     setProducts]     = useState([]);
-  const [categories,   setCategories]   = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
-  const [loading,      setLoading]      = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [categoryId, setCategoryId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (nextPage = page, nextPageSize = pageSize, nextCategoryId = categoryId) => {
     setLoading(true);
     try {
-      const [prods, cats, types] = await Promise.all([
-        getProducts(), getCategories(), getProductTypes()
+      const [prodPayload, catPayload, typePayload] = await Promise.all([
+        getProducts(nextPage, nextPageSize, nextCategoryId),
+        getCategories(1, 100),
+        getProductTypes(1, 100),
       ]);
-      setProducts(prods);
-      setCategories(cats);
-      setProductTypes(types);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  }, []);
 
-  useEffect(() => { load(); }, [load]);
+      setProducts(prodPayload.items ?? []);
+      setTotal(Number(prodPayload.total ?? prodPayload.items?.length ?? 0));
+      setPage(Number(prodPayload.page ?? nextPage));
+      setPageSize(Number(prodPayload.page_size ?? nextPageSize));
+      setCategories(catPayload.items ?? []);
+      setProductTypes(typePayload.items ?? []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, pageSize, categoryId]);
 
-  const create        = async (data)              => { await createProduct(data);           await load(); };
-  const update        = async (id, data)          => { await updateProduct(id, data);       await load(); };
-  const remove        = async (id)                => { await deleteProduct(id);             await load(); };
-  const addVariant    = async (productId, data)   => { await createVariant(productId, data); await load(); };
-  const editVariant   = async (variantId, data)   => { await updateVariant(variantId, data); await load(); };
-  const removeVariant = async (variantId)         => { await deleteVariant(variantId);       await load(); };
+  useEffect(() => { load(page, pageSize, categoryId); }, [page, pageSize, categoryId, load]);
 
-  return { products, categories, productTypes, loading, create, update, remove, addVariant, editVariant, removeVariant };
+  const create = async (data) => {
+    await createProduct(data);
+    await load(1, pageSize, categoryId);
+  };
+
+  const update = async (id, data) => {
+    await updateProduct(id, data);
+    await load(page, pageSize, categoryId);
+  };
+
+  const remove = async (id) => {
+    await deleteProduct(id);
+    await load(page, pageSize, categoryId);
+  };
+
+  const addVariant = async (productId, data) => {
+    await createVariant(productId, data);
+    await load(page, pageSize, categoryId);
+  };
+
+  const editVariant = async (variantId, data) => {
+    await updateVariant(variantId, data);
+    await load(page, pageSize, categoryId);
+  };
+
+  const removeVariant = async (variantId) => {
+    await deleteVariant(variantId);
+    await load(page, pageSize, categoryId);
+  };
+
+  return {
+    products,
+    categories,
+    productTypes,
+    loading,
+    categoryId,
+    page,
+    pageSize,
+    total,
+    setCategoryId,
+    setPage,
+    setPageSize,
+    create,
+    update,
+    remove,
+    addVariant,
+    editVariant,
+    removeVariant,
+  };
 }
