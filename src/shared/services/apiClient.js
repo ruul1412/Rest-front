@@ -44,7 +44,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     const payload = response?.data;
-    response.data = normalizeResponseData(payload);
+    response.data = response.config?.preserveResponseEnvelope
+      ? payload
+      : normalizeResponseData(payload);
     return response;
   },
   (error) => {

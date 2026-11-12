@@ -23,7 +23,7 @@ export function useOrders() {
       // sin status, el backend no filtra nada y devuelve el historial completo.
       const [abiertos, cerrados, tableResp, productResp, categoryResp] = await Promise.all([
         getGroups("abierto"), getGroups("cerrado"),
-        getTables(), getProducts(), getCategories(),
+        getTables(1, 100), getProducts(1, 100), getCategories(1, 100),
       ]);
 
       const normalizedTables = Array.isArray(tableResp) ? tableResp : tableResp?.items ?? [];
@@ -42,7 +42,9 @@ export function useOrders() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    void Promise.resolve().then(load);
+  }, [load]);
 
   const openGroup    = async (data)          => { const g = await createGroup(data); await load(); return g; };
   const close        = async (id)            => { await closeGroup(id);               await load(); };

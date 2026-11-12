@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Pencil, Trash2, Plus, Tag } from "lucide-react";
 import CategoryModal from "./CategoryModal";
 
-export default function CategoriesTable({ categories, loading, onCreate, onUpdate, onDelete }) {
+export default function CategoriesTable({ categories, total = categories.length, loading, onCreate, onUpdate, onDelete }) {
   const [modal, setModal] = useState({ open: false, category: null });
 
   const openCreate = ()         => setModal({ open: true, category: null });
@@ -25,7 +25,7 @@ export default function CategoriesTable({ categories, loading, onCreate, onUpdat
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Categorías</h2>
-          <p className="text-gray-400 mt-1 text-sm">{categories.length} categorías registradas</p>
+          <p className="text-gray-400 mt-1 text-sm">{total} categorías registradas</p>
         </div>
         <button
           onClick={openCreate}

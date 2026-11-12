@@ -9,7 +9,7 @@ const STATUS_STYLES = {
   reservada: { bg: "bg-yellow-100", text: "text-yellow-700", dot: "bg-yellow-500", label: "Reservada" },
 };
 
-export default function TableCards({ tables, loading, onCreate, onUpdate, onDelete, onChangeStatus }) {
+export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus }) {
   const { user } = useAuth();
   const isAdmin  = user?.role_code === "admin";
 
@@ -46,7 +46,7 @@ export default function TableCards({ tables, loading, onCreate, onUpdate, onDele
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Mesas</h2>
           <p className="text-gray-400 mt-1 text-sm">
-            {tables.length} mesas registradas
+            {total} mesas registradas
           </p>
         </div>
         {isAdmin && (

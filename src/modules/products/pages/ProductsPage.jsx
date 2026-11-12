@@ -4,7 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import ProductModal from "../components/ProductModal";
 
 export default function ProductsPage() {
-  const { products, categories, productTypes, loading, categoryId, page, pageSize, total, setCategoryId, setPage, create, update, remove, addVariant, editVariant, removeVariant } = useProducts();
+  const { products, categories, productTypes, loading, categoryId, page, pageSize, total, setCategoryId, setPage, setPageSize, create, update, remove, addVariant, editVariant, removeVariant } = useProducts();
   const [activeTab, setActiveTab] = useState("todos");
   const [modal, setModal] = useState({ open: false, product: null });
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -135,12 +135,25 @@ export default function ProductsPage() {
       </div>
 
       {(total > 0 || page > 1) && (
-        <div className="mt-6 flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3 shadow-sm">
-          <p className="text-sm text-gray-500">
+        <div className="mt-6 flex flex-col gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-sm text-gray-500 whitespace-nowrap">
             Página {page} de {totalPages} · {total} productos
           </p>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <label className="flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-500">
+              <span>Mostrar</span>
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                className="h-10 w-20 shrink-0 rounded-lg border border-gray-200 bg-white px-3 pr-7 text-sm text-gray-700 shadow-sm"
+              >
+                {[10, 20, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+              </select>
+            </label>
             <button
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page <= 1 || loading}
