@@ -21,7 +21,9 @@ import TableCards from "../components/tableCards";
 import { useTables } from "../hooks/useTables";
 
 export default function TablesPage() {
-  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage, setPageSize } = useTables();
+  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage, setPageSize,
+    description,setDescription
+   } = useTables();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (

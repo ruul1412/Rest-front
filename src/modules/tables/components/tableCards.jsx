@@ -10,7 +10,7 @@ const STATUS_STYLES = {
   inhabilitada: { bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-500", label: "Inhabilitada" },
 };
 
-export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus }) {
+export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus, description }) {
   const { user } = useAuth();
   const isAdmin  = user?.role_code === "admin";
 
@@ -112,7 +112,7 @@ export default function TableCards({ tables, total = tables.length, loading, onC
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="text-xs text-gray-400">Mesa</p>
-                    <p className="text-lg font-semibold text-gray-700">{table.description}</p>
+                    {/* <p className="text-lg font-semibold text-gray-700">{table.description}</p> */}
                     <h2 className="text-2xl font-bold text-gray-800">#{table.number}</h2>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
