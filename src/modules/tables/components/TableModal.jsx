@@ -46,7 +46,7 @@ export default function TableModal({ table, onSave, onClose }) {
               Capacidad (personas)
             </label>
             <input
-              type="number" min="1"
+              type="number" min="1"  
               value={capacity}
               onChange={(e) => setCapacity(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
