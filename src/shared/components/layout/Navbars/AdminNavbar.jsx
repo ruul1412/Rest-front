@@ -1,4 +1,5 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Bell,
   MessageSquare,
@@ -8,9 +9,34 @@ import {
   ChevronDown,
   Building2,
   CalendarDays,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "../../../../modules/auth/hook/useAuth";
 
 export default function Navbar() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!profileOpen) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!profileMenuRef.current?.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, [profileOpen]);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login", { replace: true });
+  };
+
   return (
     <>
       {/* Navbar */}
@@ -72,14 +98,34 @@ export default function Navbar() {
       <div className="h-8 w-px bg-brand-border mx-2" />
 
       {/* Perfil */}
-      <button className="flex items-center gap-2 p-2
-        rounded-lg hover:bg-brand-cream transition">
-        <div className="w-9 h-9 rounded-full bg-brand-soft
-          text-brand-primary flex items-center justify-center">
-          <UserRound size={20} />
-        </div>
-        <ChevronDown size={15} className="text-brand-muted" />
-      </button>
+      <div className="relative" ref={profileMenuRef}>
+        <button
+          type="button"
+          onClick={() => setProfileOpen((open) => !open)}
+          aria-label="Menú de usuario"
+          aria-expanded={profileOpen}
+          className="flex items-center gap-2 p-2 rounded-lg hover:bg-brand-cream transition"
+        >
+          <div className="w-9 h-9 rounded-full bg-brand-soft
+            text-brand-primary flex items-center justify-center">
+            <UserRound size={20} />
+          </div>
+          <ChevronDown size={15} className="text-brand-muted" />
+        </button>
+
+        {profileOpen && (
+          <div className="absolute right-0 mt-2 w-48 rounded-xl border border-brand-border bg-white p-2 shadow-lg z-50">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 transition hover:bg-red-50"
+            >
+              <LogOut size={16} />
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+      </div>
 
     </div>
   </div>
