@@ -9,23 +9,29 @@ export function useTables() {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  const load = useCallback(async (nextPage = page, nextPageSize = pageSize) => {
+  const load = useCallback(async (nextPage, nextPageSize) => {
     setLoading(true);
     try {
-      const payload = await getTables(nextPage, nextPageSize);
+      let payload = await getTables(nextPage, nextPageSize);
+      if (payload.items.length === 0 && nextPage > 1 && payload.total <= (nextPage - 1) * nextPageSize) {
+        payload = await getTables(nextPage - 1, nextPageSize);
+      }
       setTables(payload.items ?? []);
       setTotal(Number(payload.total ?? payload.items?.length ?? 0));
       setPage(Number(payload.page ?? nextPage));
       setPageSize(Number(payload.page_size ?? nextPageSize));
       setError(null);
+      return payload;
     } catch (e) {
       setError(e);
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize]);
+  }, []);
 
-  useEffect(() => { load(page, pageSize); }, [page, pageSize, load]);
+  useEffect(() => {
+    void Promise.resolve().then(() => load(page, pageSize));
+  }, [page, pageSize, load]);
 
   const create = async (data) => {
     await createTable(data);
@@ -47,5 +53,5 @@ export function useTables() {
     await load(page, pageSize);
   };
 
-  return { tables, loading, error, page, pageSize, total, setPage, setPageSize, create, update, remove, changeStatus, reload: load };
+  return { tables, loading, error, page, pageSize, total, setPage, setPageSize, create, update, remove, changeStatus, reload: () => load(page, pageSize) };
 }

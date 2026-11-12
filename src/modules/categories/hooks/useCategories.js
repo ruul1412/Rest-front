@@ -8,22 +8,28 @@ export function useCategories() {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  const load = useCallback(async (nextPage = page, nextPageSize = pageSize) => {
+  const load = useCallback(async (nextPage, nextPageSize) => {
     setLoading(true);
     try {
-      const payload = await getCategories(nextPage, nextPageSize);
+      let payload = await getCategories(nextPage, nextPageSize);
+      if (payload.items.length === 0 && nextPage > 1 && payload.total <= (nextPage - 1) * nextPageSize) {
+        payload = await getCategories(nextPage - 1, nextPageSize);
+      }
       setCategories(payload.items ?? []);
       setTotal(Number(payload.total ?? payload.items?.length ?? 0));
       setPage(Number(payload.page ?? nextPage));
       setPageSize(Number(payload.page_size ?? nextPageSize));
+      return payload;
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize]);
+  }, []);
 
-  useEffect(() => { load(page, pageSize); }, [page, pageSize, load]);
+  useEffect(() => {
+    void Promise.resolve().then(() => load(page, pageSize));
+  }, [page, pageSize, load]);
 
   const create = async (data) => {
     await createCategory(data);

@@ -10,17 +10,7 @@ const STATUS_STYLES = {
   inhabilitada: { bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-500", label: "Inhabilitada" },
 };
 
-// export default function TableCards({ tables, loading, onCreate, onUpdate, onDelete, onChangeStatus }) {
-export default function TableCards({
-  tables,
-  loading,
-  onCreate,
-  onUpdate,
-  onDelete,
-  onChangeStatus,
-  description,
-  onDescriptionChange
-}) {
+export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus }) {
   const { user } = useAuth();
   const isAdmin  = user?.role_code === "admin";
 
@@ -59,7 +49,7 @@ export default function TableCards({
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Mesas</h2>
           <p className="text-gray-400 mt-1 text-sm">
-            {tables.length} mesas registradas
+            {total} mesas registradas
           </p>
         </div>
         {isAdmin && (
