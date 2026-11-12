@@ -1,6 +1,13 @@
 import api from "../../../shared/services/apiClient";
 import { normalizePagedResponse } from "../../../shared/services/normalizePagedResponse";
 
+// export const getTables = async (description = "") =>
+//   (await api.get("/tables/config", {
+//     params: description.trim()
+//       ? { description: description.trim() }
+//       : {}
+//   })).data;
+
 export const getTables = async (page = 1, pageSize = 10) => {
   const res = await api.get("/tables", {
     params: { page, page_size: pageSize },

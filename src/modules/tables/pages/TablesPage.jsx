@@ -1,8 +1,29 @@
-import TableCards from "../components/TableCards";
+// import TableCards from "../components/tableCards";
+// import { useTables } from "../hooks/useTables";
+
+// export default function TablesPage() {
+//   const { tables, loading, create, update, remove, changeStatus } = useTables();
+
+//   return (
+//     <div className="px-4 md:px-10 mx-auto w-full py-6">
+//       <TableCards
+//         tables={tables}
+//         loading={loading}
+//         onCreate={create}
+//         onUpdate={update}
+//         onDelete={remove}
+//         onChangeStatus={changeStatus}
+//       />
+//     </div>
+//   );
+// }
+import TableCards from "../components/tableCards";
 import { useTables } from "../hooks/useTables";
 
 export default function TablesPage() {
-  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage, setPageSize } = useTables();
+  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage, setPageSize,
+    description,setDescription
+   } = useTables();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
@@ -15,6 +36,8 @@ export default function TablesPage() {
         onUpdate={update}
         onDelete={remove}
         onChangeStatus={changeStatus}
+        description={description}
+        onDescriptionChange={setDescription}
       />
 
       {(total > 0 || page > 1) && (

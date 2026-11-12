@@ -18,7 +18,7 @@ function kpiProps(kpi) {
 
 export default function HeaderStatsDynamic({ data, loading }) {
   return (
-    <div className="bg-lightBlue-600 pb-32 pt-12">
+    <div className="bg-brand-cream pb-32 pt-2">
       <div className="px-4 md:px-10 mx-auto w-full">
         <div className="flex flex-wrap">
           <div className="w-full lg:w-6/12 xl:w-1/5 px-4">

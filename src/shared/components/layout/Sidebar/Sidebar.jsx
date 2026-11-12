@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { sidebarMenu } from "../../../config/sidebarMenu";
 import { AuthContext } from "../../../../modules/auth/context/AuthContext";
 import NotificationDropdown from "../../Dropdowns/NotificationDropdown";
-import UserDropdown from "../../Dropdowns/UserDropdown";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 export default function Sidebar() {
@@ -44,7 +43,6 @@ export default function Sidebar() {
 
           <ul className="items-center flex list-none gap-1">
             <li className="inline-block relative"><NotificationDropdown /></li>
-            <li className="inline-block relative"><UserDropdown /></li>
           </ul>
         </div>
 
@@ -64,7 +62,7 @@ export default function Sidebar() {
               </span>
               <button
                 type="button"
-               className="cursor-pointer text-blueGray-600 hover:text-blueGray-900 px-2 py-1 text-2xl leading-none bg-transparent border-0"n
+               className="cursor-pointer text-blueGray-600 hover:text-blueGray-900 px-2 py-1 text-2xl leading-none bg-transparent border-0"
                 onClick={() => setCollapseShow(false)}
                 aria-label="Cerrar menú"
               >
@@ -92,23 +90,27 @@ export default function Sidebar() {
                     to={item.path}
                     onClick={() => setCollapseShow(false)}
                     className={({ isActive }) =>
-                      "flex items-center gap-2 text-xs uppercase py-3 font-bold block " +
-                      (isActive
-                        ? "text-lightBlue-500 hover:text-lightBlue-600"
-                        : "text-blueGray-700 hover:text-blueGray-500")
-                    }
+  `flex items-center gap-2 text-xs uppercase py-3 px-3
+   font-bold rounded-xl transition-all duration-200
+   ${
+     isActive
+       ? "text-brand-primary bg-brand-soft"
+       : "text-brand-text hover:text-brand-primary hover:bg-brand-cream"
+   }`
+}
                   >
                     {({ isActive }) => (
                       <>
                         {item.icon && (
                           <span className={
-                            "text-base mr-2 " +
-                            (isActive
-                              ? "opacity-75 text-lightBlue-500"
-                              : "opacity-50 text-blueGray-400")
-                          }>
-                            {item.icon}
-                          </span>
+  `text-base mr-2 ${
+    isActive
+      ? "text-brand-primary"
+      : "text-brand-muted"
+  }`
+}>
+  {item.icon}
+</span>
                         )}
                         {item.label}
                       </>
@@ -141,23 +143,27 @@ export default function Sidebar() {
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    "flex items-center gap-2 text-xs uppercase py-3 font-bold block " +
-                    (isActive
-                      ? "text-lightBlue-500 hover:text-lightBlue-600"
-                      : "text-blueGray-700 hover:text-blueGray-500")
-                  }
+  `flex items-center gap-2 text-xs uppercase py-3 px-3
+   font-bold rounded-xl transition-all duration-200
+   ${
+     isActive
+       ? "text-brand-primary bg-brand-soft"
+       : "text-brand-text hover:text-brand-primary hover:bg-brand-cream"
+   }`
+}
                 >
                   {({ isActive }) => (
                     <>
                       {item.icon && (
                         <span className={
-                          "text-base mr-2 " +
-                          (isActive
-                            ? "opacity-75 text-lightBlue-500"
-                            : "opacity-50 text-blueGray-400")
-                        }>
-                          {item.icon}
-                        </span>
+  `text-base mr-2 ${
+    isActive
+      ? "text-brand-primary"
+      : "text-brand-muted"
+  }`
+}>
+  {item.icon}
+</span>
                       )}
                       {item.label}
                     </>
