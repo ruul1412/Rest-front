@@ -99,7 +99,8 @@ export default function PaymentModal({ group, total, existingPayment, onPay, onC
     try {
       await onPay(group.id, payload);
     } catch (e) {
-      setError(e?.response?.data?.detail ?? "Error al procesar el pago");
+      const message = e?.response?.data?.detail ?? e?.response?.data?.message ?? e?.response?.data?.errors?.[0] ?? "Error al procesar el pago";
+      setError(message);
     } finally { setSaving(false); }
   };
 

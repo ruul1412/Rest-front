@@ -25,7 +25,8 @@ export default function DashboardLayout() {
       {/* Sidebar recibe role_code (string) */}
       <Sidebar roleCode={user.role_code} />
 
-      <div className="md:ml-64 bg-blueGray-100 min-h-screen">
+      {/* <div className="md:ml-64 bg-blueGray-100 min-h-screen"> */}
+      <div className="md:ml-64 bg-brand-cream min-h-screen">
         <AdminNavbar />
         <div className="px-4 md:px-10 mx-auto w-full pt-6">
           <Outlet />

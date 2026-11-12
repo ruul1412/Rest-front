@@ -58,6 +58,8 @@ export default function PaymentsPage() {
   const { groups, loading, fetchPayment, pay, reload } = usePayments();
 
   const [filter,          setFilter]          = useState("abierto");
+  const [page,            setPage]            = useState(1);
+  const [pageSize,        setPageSize]        = useState(10);
   const [selectedGroup,   setSelectedGroup]   = useState(null);
   const [selectedTotal,   setSelectedTotal]   = useState(0);
   const [existingPayment, setExistingPayment] = useState(null);
@@ -67,6 +69,9 @@ export default function PaymentsPage() {
     const base = filter ? groups.filter(g => g.status === filter) : groups;
     return sortGroups(base);
   }, [groups, filter]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pagedGroups = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const totalPendiente  = useMemo(() =>
     groups.filter(g => g.status === "abierto").reduce((s, g) => s + calcTotal(g.orders), 0),
@@ -122,7 +127,10 @@ export default function PaymentsPage() {
           {FILTERS.map(f => (
             <button
               key={f.value}
-              onClick={() => setFilter(f.value)}
+              onClick={() => {
+                setFilter(f.value);
+                setPage(1);
+              }}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition ${
                 filter === f.value
                   ? "bg-orange-500 text-white shadow-sm"
@@ -145,9 +153,46 @@ export default function PaymentsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {filtered.map(group => (
+          {pagedGroups.map(group => (
             <GroupCard key={group.id} group={group} onSelect={handleSelect} />
           ))}
+        </div>
+      )}
+
+      {filtered.length > 0 && (
+        <div className="flex flex-col gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-sm text-gray-500 whitespace-nowrap">
+            Página {currentPage} de {totalPages} · {filtered.length} cuentas
+          </p>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <label className="flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-500">
+              <span>Mostrar</span>
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                className="h-10 w-20 shrink-0 rounded-lg border border-gray-200 bg-white px-3 pr-7 text-sm text-gray-700 shadow-sm"
+              >
+                {[10, 20, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+              </select>
+            </label>
+            <button
+              onClick={() => setPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage <= 1 || loading}
+              className="px-3 py-2 rounded-xl text-sm font-medium border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              Anterior
+            </button>
+            <button
+              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage >= totalPages || loading}
+              className="px-3 py-2 rounded-xl text-sm font-medium border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              Siguiente
+            </button>
+          </div>
         </div>
       )}
 

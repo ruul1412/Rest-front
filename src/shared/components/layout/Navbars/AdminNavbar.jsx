@@ -1,40 +1,89 @@
 import React from "react";
-
-import UserDropdown from "../../Dropdowns/UserDropdown";
+import {
+  Bell,
+  MessageSquare,
+  CircleHelp,
+  Settings,
+  UserRound,
+  ChevronDown,
+  Building2,
+  CalendarDays,
+} from "lucide-react";
 
 export default function Navbar() {
   return (
     <>
       {/* Navbar */}
-      <nav className=" relative absolute top-0 left-0 w-full z-10 bg-blueGray-700 md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
-        <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">
-          {/* Brand */}
-          <a
-            className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
-            href="#pablo"
-            onClick={(e) => e.preventDefault()}
-          >
-            Registro de dashboard
-          </a>
-          {/* Form */}
-          <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
-            <div className="relative flex w-full flex-wrap items-stretch">
-              <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i className="fas fa-search"></i>
-              </span>
-              <input
-                type="text"
-                placeholder="Search here..."
-                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
-              />
-            </div>
-          </form>
-          {/* User */}
-          <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
-            <UserDropdown />
-          </ul>
+     <nav className="relative w-full z-10 bg-white
+  border-b border-brand-border shadow-sm
+  flex items-center p-4">
+
+  <div className="w-full mx-auto flex items-center
+    justify-between md:px-10 px-4">
+
+    <div className="hidden md:flex items-center gap-3 lg:ml-auto mr-3">
+
+      {/* Empresa */}
+      <button className="flex items-center gap-2 px-3 py-2
+        rounded-lg text-brand-text
+        hover:bg-brand-cream transition">
+        <Building2 size={19} />
+        <span className="text-sm">Mi empresa</span>
+        <ChevronDown size={15} />
+      </button>
+
+      {/* Calendario */}
+      <button title="Calendario"
+        className="p-2.5 rounded-lg text-brand-muted
+        hover:bg-brand-soft hover:text-brand-primary transition">
+        <CalendarDays size={20} />
+      </button>
+
+      {/* Mensajes */}
+      <button title="Mensajes"
+        className="p-2.5 rounded-lg text-brand-muted
+        hover:bg-brand-soft hover:text-brand-primary transition">
+        <MessageSquare size={20} />
+      </button>
+
+      {/* Notificaciones */}
+      <button title="Notificaciones"
+        className="relative p-2.5 rounded-lg text-brand-muted
+        hover:bg-brand-soft hover:text-brand-primary transition">
+        <Bell size={20} />
+        <span className="absolute top-1.5 right-1.5
+          w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+      </button>
+
+      {/* Ayuda */}
+      <button title="Ayuda"
+        className="p-2.5 rounded-lg text-brand-muted
+        hover:bg-brand-soft hover:text-brand-primary transition">
+        <CircleHelp size={20} />
+      </button>
+
+      {/* Configuración */}
+      <button title="Configuración"
+        className="p-2.5 rounded-lg text-brand-muted
+        hover:bg-brand-soft hover:text-brand-primary transition">
+        <Settings size={20} />
+      </button>
+
+      <div className="h-8 w-px bg-brand-border mx-2" />
+
+      {/* Perfil */}
+      <button className="flex items-center gap-2 p-2
+        rounded-lg hover:bg-brand-cream transition">
+        <div className="w-9 h-9 rounded-full bg-brand-soft
+          text-brand-primary flex items-center justify-center">
+          <UserRound size={20} />
         </div>
-      </nav>
+        <ChevronDown size={15} className="text-brand-muted" />
+      </button>
+
+    </div>
+  </div>
+</nav>
       {/* End Navbar */}
     </>
   );
