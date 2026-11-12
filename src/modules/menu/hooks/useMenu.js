@@ -10,27 +10,33 @@ export function useMenu() {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  const load = useCallback(async (nextPage = page, nextPageSize = pageSize) => {
+  const load = useCallback(async (nextPage, nextPageSize) => {
     setLoading(true);
     try {
-      const [menuPayload, productsPayload] = await Promise.all([
+      let [menuPayload, productsPayload] = await Promise.all([
         getMenus(nextPage, nextPageSize),
         getProducts(1, 100),
       ]);
 
+      if (menuPayload.items.length === 0 && nextPage > 1 && menuPayload.total <= (nextPage - 1) * nextPageSize) {
+        menuPayload = await getMenus(nextPage - 1, nextPageSize);
+      }
       setMenus(menuPayload.items ?? []);
       setTotal(Number(menuPayload.total ?? menuPayload.items?.length ?? 0));
       setPage(Number(menuPayload.page ?? nextPage));
       setPageSize(Number(menuPayload.page_size ?? nextPageSize));
       setProducts(productsPayload.items ?? []);
+      return menuPayload;
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize]);
+  }, []);
 
-  useEffect(() => { load(page, pageSize); }, [page, pageSize, load]);
+  useEffect(() => {
+    void Promise.resolve().then(() => load(page, pageSize));
+  }, [page, pageSize, load]);
 
   const create = async (data) => {
     await createMenu(data);

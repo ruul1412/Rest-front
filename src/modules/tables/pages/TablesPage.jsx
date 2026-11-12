@@ -2,13 +2,14 @@ import TableCards from "../components/TableCards";
 import { useTables } from "../hooks/useTables";
 
 export default function TablesPage() {
-  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage } = useTables();
+  const { tables, loading, create, update, remove, changeStatus, page, pageSize, total, setPage, setPageSize } = useTables();
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="px-4 md:px-10 mx-auto w-full py-6">
       <TableCards
         tables={tables}
+        total={total}
         loading={loading}
         onCreate={create}
         onUpdate={update}
@@ -17,12 +18,25 @@ export default function TablesPage() {
       />
 
       {(total > 0 || page > 1) && (
-        <div className="mt-6 flex items-center justify-between bg-white rounded-2xl border border-gray-100 px-4 py-3 shadow-sm">
-          <p className="text-sm text-gray-500">
+        <div className="mt-6 flex flex-col gap-3 bg-white rounded-2xl border border-gray-100 px-4 py-3 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-sm text-gray-500 whitespace-nowrap">
             Página {page} de {totalPages} · {total} mesas
           </p>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <label className="flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-500">
+              <span>Mostrar</span>
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                className="h-10 w-20 shrink-0 rounded-lg border border-gray-200 bg-white px-3 pr-7 text-sm text-gray-700 shadow-sm"
+              >
+                {[10, 20, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+              </select>
+            </label>
             <button
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page <= 1 || loading}
