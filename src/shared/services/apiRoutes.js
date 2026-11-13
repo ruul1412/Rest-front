@@ -15,7 +15,7 @@ const API_ROUTES = {
     create      : `${BASE}/users`,
     detail      : (id) => `${BASE}/users/${id}`,
     update      : (id) => `${BASE}/users/${id}`,
-    deactivate  : (id) => `${BASE}/users/${id}`,
+    status      : (id) => `${BASE}/users/${id}/status`,
     assignRole  : (id) => `${BASE}/users/${id}/role`,
   },
  
