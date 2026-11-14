@@ -8,6 +8,18 @@ import { normalizePagedResponse } from "../../../shared/services/normalizePagedR
 //       : {}
 //   })).data;
 
+export const getTablesbyDesc = async (page = 1,pageSize = 10,description = "") => {
+  const res = await api.get("/tables/descrip", {
+    params: {
+      page,page_size: pageSize,...(description.trim()
+        ? { description: description.trim() }
+        : {}),
+    },
+    preserveResponseEnvelope: true,
+  });
+  return normalizePagedResponse(res.data, page, pageSize);
+};
+
 export const getTables = async (page = 1, pageSize = 10) => {
   const res = await api.get("/tables", {
     params: { page, page_size: pageSize },

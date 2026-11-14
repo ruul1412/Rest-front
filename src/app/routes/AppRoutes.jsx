@@ -13,6 +13,7 @@ import ProductsPage from "../../modules/products/pages/ProductsPage";
 import MenuPage from "../../modules/menu/pages/MenuPage";
 import OrdersPage from "../../modules/orders/pages/OrdersPage";
 import PaymentsPage from "../../modules/payment/pages/Paymentspage";
+import UsersPage from "../../modules/users/pages/UsersPage";
 
 const ALL = Object.values(ROLES);
 
@@ -62,7 +63,12 @@ export default function AppRoutes() {
             <PaymentsPage />
           </PrivateRoute>
         } />
-
+        
+        <Route path="/users" element={
+          <PrivateRoute roles={[ROLES.ADMIN]}>
+            <UsersPage />
+          </PrivateRoute>
+        } />
       </Route>
       
 

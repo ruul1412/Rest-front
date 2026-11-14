@@ -11,8 +11,19 @@ const STATUS_STYLES = {
   inhabilitada: { bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-500", label: "Inhabilitada" },
 };
 
-export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus, description }) {
-  const { user } = useAuth();
+// export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus, description }) {
+export default function TableCards({
+  tables,
+  total = tables.length,
+  loading,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onChangeStatus,
+  description,
+  onDescriptionChange
+}) {
+const { user } = useAuth();
   const { confirm } = useCrudPopup();
   const isAdmin  = user?.role_code === "admin";
 
@@ -77,16 +88,16 @@ export default function TableCards({ tables, total = tables.length, loading, onC
     />
 
     <input
-      type="text"
-      value={description}
-      onChange={(e) => onDescriptionChange(e.target.value)}
-      placeholder="Ej. Terraza, Salón VIP..."
-      className="w-full bg-gray-50 border !border-gray-200  !rounded-xl
-                 pl-10 pr-10 py-3 text-sm text-gray-700
-                 placeholder:text-gray-400 outline-none transition
-                 focus:bg-white focus:border-gray-300
-                 focus:ring-1 focus:ring-gray-200"
-    />
+  type="text"
+  value={description}
+  onChange={(e) => onDescriptionChange(e.target.value)}
+  placeholder="Ej. Terraza, Salón VIP..."
+  className="w-full bg-gray-50 border !border-gray-200  !rounded-xl
+             pl-10 pr-10 py-3 text-sm text-gray-700
+             placeholder:text-gray-400 outline-none transition
+             focus:bg-white focus:border-gray-300
+             focus:ring-1 focus:ring-gray-200"
+/>
 
     {description && (
       <button
@@ -114,7 +125,7 @@ export default function TableCards({ tables, total = tables.length, loading, onC
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <p className="text-xs text-gray-400">Mesa</p>
-                    {/* <p className="text-lg font-semibold text-gray-700">{table.description}</p> */}
+                    <p className="text-lg font-semibold text-gray-700">{table.description}</p>
                     <h2 className="text-2xl font-bold text-gray-800">#{table.number}</h2>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
@@ -128,18 +139,7 @@ export default function TableCards({ tables, total = tables.length, loading, onC
                   <p className="text-lg font-semibold text-gray-700">{table.capacity} personas</p>
                 </div>
 
-                {/* ESTADO */}
-                {/* <button
-                  onClick={() => onChangeStatus(table.id, nextStatus(table.status))}
-                  className={`w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-full mb-4 text-xs font-semibold transition hover:opacity-80 ${st.bg} ${st.text}`}
-                >
-                  <span className={`w-2 h-2 rounded-full ${st.dot}`} />
-                  {st.label}
-                  <RefreshCw size={11} className="ml-1 opacity-60" />
-                </button> */}
-
                 <button
-                  // disabled={table.status === "inhabilitada"}
                   onClick={() => onChangeStatus(table.id, nextStatus(table.status))}
                   className={`w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-full mb-4 text-xs font-semibold transition ${
                     st.bg
