@@ -5,6 +5,7 @@ import TableGrid from "../components/TableGrid";
 import GroupCard from "../components/GroupCard";
 import GroupModal from "../components/GroupModal";
 import OrderModal from "../components/OrderModal";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 const VIEWS = [
   { value: "tables",  label: "Mesas"    },
@@ -13,6 +14,7 @@ const VIEWS = [
 ];
 
 export default function OrdersPage() {
+  const { confirm } = useCrudPopup();
   const { user } = useAuth();
   const {
     groups, tables, menu, products, categories, loading,
@@ -68,8 +70,8 @@ export default function OrdersPage() {
     setPosTarget(null);
   };
 
-  const handleClose  = async (id) => { if (window.confirm("¿Cerrar esta cuenta?")) await close(id);  };
-  const handleCancel = async (id) => { if (window.confirm("¿Anular esta cuenta?")) await cancel(id); };
+  const handleClose  = async (id) => { if (await confirm("¿Cerrar esta cuenta?")) await close(id);  };
+  const handleCancel = async (id) => { if (await confirm("¿Anular esta cuenta?")) await cancel(id); };
 
   const openCount = groups.filter(g => g.status === "abierto").length;
   const filteredGroups = view === "tables" ? [] : groups.filter(g => g.status === view);

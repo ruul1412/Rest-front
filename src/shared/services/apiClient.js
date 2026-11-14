@@ -17,8 +17,40 @@ const normalizeResponseData = (payload) => {
   return payload;
 };
 
+const formatErrorMessage = (value) => {
+  if (typeof value === "string" && value.trim()) return value;
+  if (typeof value === "number") return String(value);
+  if (Array.isArray(value)) {
+    return value.map(formatErrorMessage).filter(Boolean).join(", ") || "Error en la operación";
+  }
+  if (value && typeof value === "object") {
+    const message = value.detail ?? value.message ?? value.msg ?? value.error ?? value.errors;
+    if (message !== undefined) return formatErrorMessage(message);
+  }
+  return "Error en la operación";
+};
+
 const extractErrorDetail = (payload) =>
-  payload?.detail ?? payload?.message ?? payload?.errors?.[0] ?? "Error en la operación";
+  formatErrorMessage(payload?.detail ?? payload?.message ?? payload?.errors ?? payload?.error ?? payload);
+
+const isCrudMutation = (config) => {
+  const method = config?.method?.toLowerCase();
+  const path = config?.url?.replace(/^https?:\/\/[^/]+/, "").split("?")[0] ?? "";
+  return ["post", "put", "patch", "delete"].includes(method) &&
+    /^\/(tables|categories|products|menu|orders|payments)(\/|$)/.test(path);
+};
+
+const dispatchCrudPopup = (detail) => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("rest-front:crud-popup", { detail }));
+  }
+};
+
+const defaultSuccessMessage = (method) => {
+  if (method === "post") return "Registro creado correctamente.";
+  if (method === "delete") return "Registro eliminado correctamente.";
+  return "Cambios guardados correctamente.";
+};
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
@@ -44,6 +76,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     const payload = response?.data;
+    if (isCrudMutation(response?.config)) {
+      const method = response.config.method.toLowerCase();
+      dispatchCrudPopup({
+        type: "success",
+        message: payload?.message ?? defaultSuccessMessage(method),
+      });
+    }
     response.data = response.config?.preserveResponseEnvelope
       ? payload
       : normalizeResponseData(payload);
@@ -51,6 +90,10 @@ api.interceptors.response.use(
   },
   (error) => {
     const payload = error?.response?.data;
+    if (isCrudMutation(error?.config) && error.response?.status !== 401) {
+      const message = payload ? extractErrorDetail(payload) : error.message;
+      dispatchCrudPopup({ type: "error", message: String(message) });
+    }
     if (isStandardApiResponse(payload)) {
       const detail = extractErrorDetail(payload);
       error.response.data = {

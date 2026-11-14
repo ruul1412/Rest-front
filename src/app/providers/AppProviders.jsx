@@ -1,5 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from '../../modules/auth/context/AuthContext'
+import CrudPopupProvider from '../../shared/components/CrudPopupProvider'
 
 export default function AppProviders({ children }) {
   return (
@@ -8,7 +9,9 @@ export default function AppProviders({ children }) {
     v7_relativeSplatPath: true,
   }}>
       <AuthProvider>
-        {children}
+        <CrudPopupProvider>
+          {children}
+        </CrudPopupProvider>
       </AuthProvider>
     </BrowserRouter>
   )

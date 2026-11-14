@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Pencil, Trash2, PackagePlus, Wine } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import ProductModal from "../components/ProductModal";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 export default function ProductsPage() {
+  const { confirm } = useCrudPopup();
   const { products, categories, productTypes, loading, categoryId, page, pageSize, total, setCategoryId, setPage, setPageSize, create, update, remove, addVariant, editVariant, removeVariant } = useProducts();
   const [activeTab, setActiveTab] = useState("todos");
   const [modal, setModal] = useState({ open: false, product: null });
@@ -20,7 +22,7 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Desactivar este producto?")) await remove(id);
+    if (await confirm("¿Desactivar este producto?")) await remove(id);
   };
 
   const filtered = activeTab === "todos"
