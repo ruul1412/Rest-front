@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Users, Pencil, Trash2, Plus, RefreshCw, Search} from "lucide-react";
 import { useAuth } from "../../../modules/auth/hook/useAuth";
 import TableModal from "./TableModal";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 const STATUS_STYLES = {
   libre:     { bg: "bg-green-100",  text: "text-green-700",  dot: "bg-green-500",  label: "Libre"     },
@@ -12,6 +13,7 @@ const STATUS_STYLES = {
 
 export default function TableCards({ tables, total = tables.length, loading, onCreate, onUpdate, onDelete, onChangeStatus, description }) {
   const { user } = useAuth();
+  const { confirm } = useCrudPopup();
   const isAdmin  = user?.role_code === "admin";
 
   const [modal, setModal] = useState({ open: false, table: null });
@@ -27,7 +29,7 @@ export default function TableCards({ tables, total = tables.length, loading, onC
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Eliminar esta mesa?")) await onDelete(id);
+    if (await confirm("¿Eliminar esta mesa?")) await onDelete(id);
   };
 
  const nextStatus = (current) => ({
