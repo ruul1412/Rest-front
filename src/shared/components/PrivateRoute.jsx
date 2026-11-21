@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../modules/auth/hook/useAuth";
 
@@ -5,6 +6,7 @@ export default function PrivateRoute({ children, roles = [] }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  // Esperar a que se verifique la sesión
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -13,13 +15,31 @@ export default function PrivateRoute({ children, roles = [] }) {
     );
   }
 
+  // Sin usuario autenticado
   if (!user) {
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+    return (
+      <Navigate
+        to="/auth/login"
+        state={{ from: location }}
+        replace
+      />
+    );
   }
 
-  // role_code es string → verificamos inclusión directa
-  if (roles.length > 0 && !roles.includes(user.role_code)) {
+  // Validar contexto de acceso
+  if (user.scope !== "platform" && user.scope !== "branch") {
     return <Navigate to="/not-authorized" replace />;
+  }
+
+  // Las rutas con roles definidos son exclusivamente operativas
+  if (roles.length > 0) {
+    if (user.scope !== "branch") {
+      return <Navigate to="/not-authorized" replace />;
+    }
+
+    if (!roles.includes(user.role_code)) {
+      return <Navigate to="/not-authorized" replace />;
+    }
   }
 
   return children;

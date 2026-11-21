@@ -5,8 +5,9 @@ const API_ROUTES = {
  
   // ── Auth ──────────────────────────────────────────────────────────────────
   auth: {
-    login : `${BASE}/auth/login`,
-    me    : `${BASE}/auth/me`,
+    login: `${BASE}/auth/login`,
+    me: `${BASE}/auth/me`,
+    selectBranch: `${BASE}/auth/select-branch`,
   },
  
   // ── Users ─────────────────────────────────────────────────────────────────
