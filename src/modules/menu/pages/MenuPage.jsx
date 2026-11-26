@@ -3,15 +3,17 @@ import { Plus, Trash2, Settings, CheckCircle, XCircle } from "lucide-react";
 import { useMenu } from "../hooks/useMenu";
 import MenuModal from "../components/MenuModal";
 import MenuDetailModal from "../components/MenuDetailModal";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 export default function MenuPage() {
+  const { confirm } = useCrudPopup();
   const { menus, products, loading, create, update, remove, createSlot, removeSlot, createEntry, removeEntry, page, pageSize, total, setPage, setPageSize } = useMenu();
   const [createOpen, setCreateOpen] = useState(false);
   const [detailMenu, setDetailMenu] = useState(null);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const handleCreate = async (data) => { await create(data); setCreateOpen(false); };
-  const handleDelete = async (id) => { if (window.confirm("¿Eliminar este menú?")) await remove(id); };
+  const handleDelete = async (id) => { if (await confirm("¿Eliminar este menú?")) await remove(id); };
   const toggleActive = async (menu) => await update(menu.id, { is_active: !menu.is_active });
 
   return (

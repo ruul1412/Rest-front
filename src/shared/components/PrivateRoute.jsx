@@ -1,26 +1,50 @@
+
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../modules/auth/hook/useAuth";
 
-export default function PrivateRoute({ children, roles = [] }) {
+export default function PrivateRoute({
+  children,
+  roles = [],
+  scope,
+}) {
   const { user, loading } = useAuth();
+  
   const location = useLocation();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <p className="text-gray-500">Cargando...</p>
       </div>
     );
   }
 
   if (!user) {
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+    return (
+      <Navigate
+        to="/auth/login"
+        state={{ from: location }}
+        replace
+      />
+    );
   }
 
-  // role_code es string → verificamos inclusión directa
-  if (roles.length > 0 && !roles.includes(user.role_code)) {
+  // Si se especifica un ámbito, debe coincidir con el del usuario.
+  if (scope && user.scope !== scope) {
     return <Navigate to="/not-authorized" replace />;
   }
 
+  // Las rutas con roles operativos pertenecen a una sucursal.
+  if (roles.length > 0) {
+    const requiredScope = scope || "branch";
+
+    if (user.scope !== requiredScope) {
+      return <Navigate to="/not-authorized" replace />;
+    }
+
+    if (!roles.includes(user.role_code)) {
+      return <Navigate to="/not-authorized" replace />;
+    }
+  }
   return children;
 }

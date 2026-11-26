@@ -1,43 +1,48 @@
+
 import { ROLES } from "./appSettings";
 
 export const ACCESS = {
   [ROLES.ADMIN]: {
-    redirect: "/admin/dashboard",
+    redirect: "/dashboard",
     menu: [
-      { key: "dashboard",     label: "Dashboard",    path: "/admin/dashboard" },
-      { key: "mesas",         label: "Mesas",        path: "/admin/mesas" },
-      { key: "productos",     label: "Productos",    path: "/admin/productos" },
-      { key: "categorias",    label: "Categorías",   path: "/admin/categorias" },
-      { key: "menu",          label: "Menú del día", path: "/admin/menus" },
-      { key: "ordenes",       label: "Órdenes",      path: "/admin/ordenes" },
-      { key: "usuarios",      label: "Usuarios",     path: "/admin/usuarios" },
-      { key: "reportes",      label: "Reportes",     path: "/admin/reportes" },
+      { key: "dashboard", label: "Dashboard", path: "/admin/dashboard" },
+      { key: "mesas", label: "Mesas", path: "/admin/mesas" },
+      { key: "productos", label: "Productos", path: "/admin/productos" },
+      { key: "categorias", label: "Categorías", path: "/admin/categorias" },
+      { key: "menu", label: "Menú del día", path: "/admin/menus" },
+      { key: "ordenes", label: "Órdenes", path: "/admin/ordenes" },
+      { key: "usuarios", label: "Usuarios", path: "/admin/usuarios" },
+      { key: "reportes", label: "Reportes", path: "/admin/reportes" },
     ],
   },
+
   [ROLES.MESERO]: {
-    redirect: "/mesero/mesas",
+    redirect: "/dashboard",
     menu: [
-      { key: "mesas",   label: "Mesas",   path: "/mesero/mesas" },
+      { key: "mesas", label: "Mesas", path: "/mesero/mesas" },
       { key: "ordenes", label: "Órdenes", path: "/mesero/ordenes" },
     ],
   },
+
   [ROLES.CAJERO]: {
-    redirect: "/cajero/ordenes",
+    redirect: "/dashboard",
     menu: [
-      { key: "ordenes",  label: "Órdenes",  path: "/cajero/ordenes" },
-      { key: "pagos",    label: "Pagos",    path: "/cajero/pagos" },
+      { key: "ordenes", label: "Órdenes", path: "/cajero/ordenes" },
+      { key: "pagos", label: "Pagos", path: "/cajero/pagos" },
       { key: "reportes", label: "Reportes", path: "/cajero/reportes" },
     ],
   },
+
   [ROLES.COCINA]: {
-    redirect: "/cocina/ordenes",
+    redirect: "/dashboard",
     menu: [
       { key: "ordenes", label: "Órdenes", path: "/cocina/ordenes" },
-      { key: "menu",    label: "Menú",    path: "/cocina/menu" },
+      { key: "menu", label: "Menú", path: "/cocina/menu" },
     ],
   },
+
   [ROLES.BARTENDER]: {
-    redirect: "/bar/ordenes",
+    redirect: "/dashboard",
     menu: [
       { key: "ordenes", label: "Órdenes", path: "/bar/ordenes" },
     ],
@@ -53,10 +58,19 @@ const ROLE_PRIORITY = [
 ];
 
 export const getPrimaryRole = (roles = []) =>
-  ROLE_PRIORITY.find((r) => roles.includes(r));
+  ROLE_PRIORITY.find((role) => roles.includes(role));
 
-export const getRedirectByRole = (role_code) =>
-  ACCESS[role_code]?.redirect ?? "/";
+export const getRedirectByUser = (user) => {
+  if (user?.scope === "platform" && user?.role_code === "super_admin") {
+    return "/platform/dashboard";
+  }
 
-export const getMenuByRole = (role_code) =>
-  ACCESS[role_code]?.menu ?? [];
+  if (user?.scope === "branch") {
+    return "/dashboard";
+  }
+
+  return "/not-authorized";
+};
+
+export const getMenuByRole = (roleCode) =>
+  ACCESS[roleCode]?.menu ?? [];

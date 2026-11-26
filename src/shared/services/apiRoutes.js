@@ -5,8 +5,9 @@ const API_ROUTES = {
  
   // ── Auth ──────────────────────────────────────────────────────────────────
   auth: {
-    login : `${BASE}/auth/login`,
-    me    : `${BASE}/auth/me`,
+    login: `${BASE}/auth/login`,
+    me: `${BASE}/auth/me`,
+    selectBranch: `${BASE}/auth/select-branch`,
   },
  
   // ── Users ─────────────────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ const API_ROUTES = {
     create      : `${BASE}/users`,
     detail      : (id) => `${BASE}/users/${id}`,
     update      : (id) => `${BASE}/users/${id}`,
-    deactivate  : (id) => `${BASE}/users/${id}`,
+    status      : (id) => `${BASE}/users/${id}/status`,
     assignRole  : (id) => `${BASE}/users/${id}/role`,
   },
  

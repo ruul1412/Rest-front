@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Pencil, Trash2, Plus, Tag } from "lucide-react";
 import CategoryModal from "./CategoryModal";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 export default function CategoriesTable({ categories, total = categories.length, loading, onCreate, onUpdate, onDelete }) {
+  const { confirm } = useCrudPopup();
   const [modal, setModal] = useState({ open: false, category: null });
 
   const openCreate = ()         => setModal({ open: true, category: null });
@@ -16,7 +18,7 @@ export default function CategoriesTable({ categories, total = categories.length,
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Eliminar esta categoría?")) await onDelete(id);
+    if (await confirm("¿Eliminar esta categoría?")) await onDelete(id);
   };
 
   return (

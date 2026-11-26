@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Plus, XCircle, CheckCircle, Utensils, UtensilsCrossed, ShoppingBag } from "lucide-react";
+import { useCrudPopup } from "../../../shared/hooks/useCrudPopup";
 
 const STATUS_STYLES = {
   pendiente:  { bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200", label: "Pendiente"  },
@@ -10,6 +11,7 @@ const STATUS_STYLES = {
 };
 
 function OrderRow({ order, canCook, canDeliver, userRoleCode, onChangeStatus }) {
+  const { confirm } = useCrudPopup();
   const st          = STATUS_STYLES[order.status] ?? STATUS_STYLES.pendiente;
   const nextCook    = { pendiente: "en_proceso", en_proceso: "listo" }[order.status];
   const nextDeliver = order.status === "listo" ? "entregado" : null;
@@ -37,7 +39,9 @@ function OrderRow({ order, canCook, canDeliver, userRoleCode, onChangeStatus }) 
             </button>
           )}
           {canCancel && (
-            <button onClick={() => window.confirm("¿Cancelar esta orden?") && onChangeStatus(order.id, "cancelado")}
+            <button onClick={async () => {
+              if (await confirm("¿Cancelar esta orden?")) await onChangeStatus(order.id, "cancelado");
+            }}
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-500 text-xs font-medium hover:bg-red-50 transition">
               <XCircle size={11} /> Cancelar
             </button>
