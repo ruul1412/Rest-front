@@ -1,28 +1,108 @@
-// src/shared/config/sidebarMenu.js
+
 import {
-  FaLaptop, FaTable, FaNewspaper, FaUser,
-  FaBook, FaShoppingCart, FaChartBar,
-  FaCashRegister, FaUtensils, FaTags,
+  FaLaptop,
+  FaTable,
+  FaNewspaper,
+  FaUser,
+  FaBook,
+  FaShoppingCart,
+  FaChartBar,
+  FaCashRegister,
+  FaTags,
+  FaBuilding,
 } from "react-icons/fa";
 
-export const ROLES = {
-  ADMIN:     "admin",
-  MESERO:    "mesero",
-  CAJERO:    "cajero",
-  COCINA:    "cocina",
-  BARTENDER: "bartender",
-};
+import { ROLES } from "./appSettings";
 
-const ALL = Object.values(ROLES);
+const SUPER_ADMIN = "super_admin";
+const ALL_BRANCH_ROLES = Object.values(ROLES);
 
 export const sidebarMenu = [
-  { label: "Dashboard",    path: "/dashboard",  icon: <FaLaptop />,       roles: ALL },
-  { label: "Mesas",        path: "/tables",      icon: <FaTable />,        roles: ["admin","mesero","cajero"] },
-  { label: "Categorías",   path: "/categories",  icon: <FaTags />,         roles: ["admin"] },
-  { label: "Productos",    path: "/products",    icon: <FaNewspaper />,    roles: ["admin"] },
-  { label: "Menú del día", path: "/menu",        icon: <FaBook />,         roles: ["admin","cocina"] },
-  { label: "Órdenes",      path: "/orders",      icon: <FaShoppingCart />, roles: ALL },
-  { label: "Pagos",        path: "/payments",    icon: <FaCashRegister />, roles: ["admin","cajero"] },
-  { label: "Reportes",     path: "/reports",     icon: <FaChartBar />,     roles: ["admin","cajero"] },
-  { label: "Usuarios",     path: "/users",       icon: <FaUser />,         roles: ["admin"] },
+  // PANEL DE PLATAFORMA
+  {
+    label: "Dashboard",
+    path: "/platform/dashboard",
+    icon: <FaLaptop />,
+    scope: "platform",
+    roles: [SUPER_ADMIN],
+  },
+  {
+    label: "Empresas",
+    path: "/platform/companies",
+    icon: <FaBuilding />,
+    scope: "platform",
+    roles: [SUPER_ADMIN],
+  },
+  {
+    label: "Usuarios",
+    path: "/platform/users",
+    icon: <FaUser />,
+    scope: "platform",
+    roles: [SUPER_ADMIN],
+  },
+
+  // PANEL DE SUCURSAL
+  {
+    label: "Dashboard",
+    path: "/dashboard",
+    icon: <FaLaptop />,
+    scope: "branch",
+    roles: ALL_BRANCH_ROLES,
+  },
+  {
+    label: "Mesas",
+    path: "/tables",
+    icon: <FaTable />,
+    scope: "branch",
+    roles: [ROLES.ADMIN, ROLES.MESERO, ROLES.CAJERO],
+  },
+  {
+    label: "Categorías",
+    path: "/categories",
+    icon: <FaTags />,
+    scope: "branch",
+    roles: [ROLES.ADMIN],
+  },
+  {
+    label: "Productos",
+    path: "/products",
+    icon: <FaNewspaper />,
+    scope: "branch",
+    roles: [ROLES.ADMIN],
+  },
+  {
+    label: "Menú del día",
+    path: "/menu",
+    icon: <FaBook />,
+    scope: "branch",
+    roles: [ROLES.ADMIN, ROLES.COCINA],
+  },
+  {
+    label: "Órdenes",
+    path: "/orders",
+    icon: <FaShoppingCart />,
+    scope: "branch",
+    roles: ALL_BRANCH_ROLES,
+  },
+  {
+    label: "Pagos",
+    path: "/payments",
+    icon: <FaCashRegister />,
+    scope: "branch",
+    roles: [ROLES.ADMIN, ROLES.CAJERO],
+  },
+  {
+    label: "Reportes",
+    path: "/reports",
+    icon: <FaChartBar />,
+    scope: "branch",
+    roles: [ROLES.ADMIN, ROLES.CAJERO],
+  },
+  {
+    label: "Usuarios",
+    path: "/users",
+    icon: <FaUser />,
+    scope: "branch",
+    roles: [ROLES.ADMIN],
+  },
 ];

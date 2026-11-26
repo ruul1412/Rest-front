@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 
 import { useAuth } from "../hook/useAuth";
-import { getRedirectByRole } from "../../../shared/config/accessControl";
+import { getRedirectByUser } from "../../../shared/config/accessControl";
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -15,39 +16,39 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    try {
+      const result = await login(email, password);
 
-  try {
-    const result = await login(email, password);
+      // El usuario debe seleccionar una sucursal
+      if (result.requiresBranchSelection) {
+        navigate("/select-branch");
+        return;
+      }
 
-    // El usuario debe seleccionar una sucursal
-    if (result.requiresBranchSelection) {
-      navigate("/select-branch");
-      return;
+      // Redirección según el ámbito y rol del usuario
+      navigate(getRedirectByUser(result), {
+        replace: true,
+      });
+
+    } catch (err) {
+      const message =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        err.response?.data?.errors?.[0] ||
+        err.message ||
+        "Credenciales inválidas";
+
+      setError(message);
+
+    } finally {
+      setLoading(false);
     }
-
-    // Acceso directo
-    navigate(getRedirectByRole(result.role_code));
-
-  } catch (err) {
-    const message =
-      err.response?.data?.detail ||
-      err.response?.data?.message ||
-      err.response?.data?.errors?.[0] ||
-      err.message ||
-      "Credenciales inválidas";
-
-    setError(message);
-
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const inputClass = `w-full px-4 py-3.5 bg-white border border-[#DDD5CB]
     rounded-lg text-[15px] text-[#30251F] placeholder:text-[#A69A8D]
@@ -58,7 +59,6 @@ const handleSubmit = async (e) => {
     "flex items-center gap-2 text-[15px] font-medium text-[#30251F] mb-2";
 
   return (
-    
     <div className="w-full">
 
       {/* Encabezado */}
@@ -66,6 +66,7 @@ const handleSubmit = async (e) => {
         <h2 className="text-3xl font-bold text-[#2B211C] mb-2">
           Iniciar <span className="text-[#C58B42]">Sesión</span>
         </h2>
+
         <p className="text-[15px] text-[#6F655C]">
           Accede a tu cuenta para continuar
         </p>
@@ -74,8 +75,7 @@ const handleSubmit = async (e) => {
       <form onSubmit={handleSubmit}>
 
         {error && (
-          <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200
-            text-red-600 text-sm">
+          <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
             {error}
           </div>
         )}
@@ -86,6 +86,7 @@ const handleSubmit = async (e) => {
             <Mail size={19} />
             Correo Electrónico
           </label>
+
           <input
             type="email"
             value={email}
@@ -114,11 +115,11 @@ const handleSubmit = async (e) => {
               placeholder="••••••••"
               className={`${inputClass} pr-12`}
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2
-                text-[#8B8178] hover:text-[#B77C36] transition"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8B8178] hover:text-[#B77C36] transition"
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? <Eye size={19} /> : <EyeOff size={19} />}
@@ -130,12 +131,7 @@ const handleSubmit = async (e) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3
-            bg-[#C58B42] hover:bg-[#B77C36]
-            text-white font-semibold text-[15px]
-            py-4 rounded-lg shadow-sm transition-all duration-200
-            hover:shadow-md
-            disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 bg-[#C58B42] hover:bg-[#B77C36] text-white font-semibold text-[15px] py-4 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             "Ingresando..."
@@ -148,9 +144,10 @@ const handleSubmit = async (e) => {
         </button>
       </form>
 
-      {/* Recuperar contraseña con líneas */}
+      {/* Recuperar contraseña */}
       <div className="mt-6 flex items-center gap-4">
         <span className="flex-1 h-px bg-[#E5DED5]" />
+
         <button
           type="button"
           onClick={() => navigate("/forgot-password")}
@@ -158,6 +155,7 @@ const handleSubmit = async (e) => {
         >
           ¿Olvidaste tu contraseña?
         </button>
+
         <span className="flex-1 h-px bg-[#E5DED5]" />
       </div>
     </div>

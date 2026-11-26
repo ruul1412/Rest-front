@@ -6,9 +6,7 @@ import AdminNavbar from "../../components/layout/Navbars/AdminNavbar";
 import FooterAdmin from "../../components/layout/Footers/FooterAdmin";
 
 export default function DashboardLayout() {
-  console.log("DashboardLayout renderizando");  // ← agrega esto
   const { user, loading } = useAuth();
-  console.log("user en layout:", user); 
 
   if (loading) {
     return (

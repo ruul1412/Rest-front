@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Building2, MapPin, LogOut } from "lucide-react";
 
 import { useAuth } from "../hook/useAuth";
-import { getRedirectByRole } from "../../../shared/config/accessControl";
+import { getRedirectByUser } from "../../../shared/config/accessControl";
 
 export default function SelectBranchPage() {
   const {
     branchSelection,
     selectBranch,
-    logout
+    logout,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -36,8 +36,9 @@ export default function SelectBranchPage() {
     try {
       const user = await selectBranch(branchId);
 
-      navigate(getRedirectByRole(user.role_code), {
-        replace: true
+      // Redirección según el ámbito y rol del usuario
+      navigate(getRedirectByUser(user), {
+        replace: true,
       });
 
     } catch (err) {
@@ -64,8 +65,7 @@ export default function SelectBranchPage() {
 
         {/* Encabezado */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center
-            w-14 h-14 rounded-2xl bg-[#F0E4D3] text-[#B77C36] mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#F0E4D3] text-[#B77C36] mb-4">
             <Building2 size={28} />
           </div>
 
@@ -80,8 +80,7 @@ export default function SelectBranchPage() {
 
         {/* Error */}
         {error && (
-          <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200
-            text-red-600 text-sm">
+          <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
             {error}
           </div>
         )}
@@ -98,16 +97,11 @@ export default function SelectBranchPage() {
                 type="button"
                 onClick={() => handleSelectBranch(branch.branch_id)}
                 disabled={selectedId !== null}
-                className="w-full flex items-center justify-between gap-4
-                  bg-white border border-[#E5DED5] rounded-xl p-5
-                  text-left transition-all duration-200
-                  hover:border-[#C58B42] hover:shadow-md
-                  disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between gap-4 bg-white border border-[#E5DED5] rounded-xl p-5 text-left transition-all duration-200 hover:border-[#C58B42] hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-4">
 
-                  <div className="flex items-center justify-center
-                    w-12 h-12 rounded-xl bg-[#F7F0E6] text-[#B77C36]">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#F7F0E6] text-[#B77C36]">
                     <MapPin size={23} />
                   </div>
 
@@ -120,8 +114,7 @@ export default function SelectBranchPage() {
                       {branch.company_name}
                     </p>
 
-                    <span className="inline-block mt-2 text-xs font-medium
-                      text-[#B77C36] bg-[#F7F0E6] px-2.5 py-1 rounded-full">
+                    <span className="inline-block mt-2 text-xs font-medium text-[#B77C36] bg-[#F7F0E6] px-2.5 py-1 rounded-full">
                       {branch.role_name || branch.role_code}
                     </span>
                   </div>
@@ -131,7 +124,6 @@ export default function SelectBranchPage() {
                 <span className="text-sm font-semibold text-[#B77C36]">
                   {isLoading ? "Ingresando..." : "Ingresar"}
                 </span>
-
               </button>
             );
           })}
@@ -149,9 +141,7 @@ export default function SelectBranchPage() {
           type="button"
           onClick={handleLogout}
           disabled={selectedId !== null}
-          className="flex items-center justify-center gap-2 mx-auto mt-8
-            text-sm text-[#6F655C] hover:text-[#B77C36] transition
-            disabled:opacity-50"
+          className="flex items-center justify-center gap-2 mx-auto mt-8 text-sm text-[#6F655C] hover:text-[#B77C36] transition disabled:opacity-50"
         >
           <LogOut size={17} />
           Cerrar sesión

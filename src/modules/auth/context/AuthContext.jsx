@@ -67,6 +67,9 @@ export function AuthProvider({ children }) {
 
       const userData = await getMe();
       setUser(userData);
+      if (userData.scope === "branch") {
+        localStorage.setItem("branchId", JSON.stringify(userData.branch_id));
+      }
 
       return userData;
     }

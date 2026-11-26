@@ -4,61 +4,145 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "../../shared/components/PrivateRoute";
 import DashboardLayout from "../../shared/components/layout/DashboardLayout";
 import AuthLayout from "../../shared/components/layout/AuthLayout";
+import { ROLES } from "../../shared/config/appSettings";
 
-import { ROLES } from "../../shared/config/sidebarMenu";
+import { useAuth } from "../../modules/auth/hook/useAuth";
 
-// Auth
 import LoginPage from "../../modules/auth/pages/LoginPage";
 import SelectBranchPage from "../../modules/auth/pages/SelectBranchPage";
 import NotAuthorized from "../../modules/auth/pages/NotAuthorized";
 
-// Admin
 import DashboardPage from "../../modules/admin/pages/DashboardPage";
-
-// Tables
 import TablesPage from "../../modules/tables/pages/TablesPage";
-
-// Categories
 import CategoriesPage from "../../modules/categories/pages/CategoriesPage";
-
-// Products
 import ProductsPage from "../../modules/products/pages/ProductsPage";
-
-// Menu
 import MenuPage from "../../modules/menu/pages/MenuPage";
-
-// Orders
 import OrdersPage from "../../modules/orders/pages/OrdersPage";
-
-// Payments
 import PaymentsPage from "../../modules/payment/pages/Paymentspage";
-
-// Users
+import CompaniesPage from "../../modules/companies/pages/CompaniesPage";
+import SuperAdminDashboardPage from "../../modules/superadmin/pages/DashboardPage";
+import BranchesPage from "../../modules/branches/pages/BranchesPage";
 import UsersPage from "../../modules/users/pages/UsersPage";
+
+const BRANCH_ROLES = Object.values(ROLES);
+const SUPER_ADMIN = "super_admin";
+
+// Redirige según el usuario autenticado
+function DefaultRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-gray-500">Cargando...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
+  if (
+    user.scope === "platform" &&
+    user.role_code === SUPER_ADMIN
+  ) {
+    return <Navigate to="/platform/dashboard" replace />;
+  }
+
+  if (user.scope === "branch") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Navigate to="/not-authorized" replace />;
+}
 
 export default function AppRoutes() {
   return (
     <Routes>
-
-      {/* Públicas */}
+      {/* AUTENTICACIÓN */}
       <Route element={<AuthLayout />}>
         <Route path="/auth/login" element={<LoginPage />} />
-        <Route path="/select-branch" element={<SelectBranchPage />} />
       </Route>
 
-      <Route path="/not-authorized" element={<NotAuthorized />} />
+      <Route
+        path="/select-branch"
+        element={<SelectBranchPage />}
+      />
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/not-authorized"
+        element={<NotAuthorized />}
+      />
 
-      {/* Privadas */}
-      <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+      {/* REDIRECCIÓN INICIAL */}
+      <Route path="/" element={<DefaultRedirect />} />
 
-        <Route path="/dashboard" element={<DashboardPage />} />
+      {/* PANEL SUPER ADMIN */}
+      <Route
+        element={
+          <PrivateRoute
+            scope="platform"
+            roles={[SUPER_ADMIN]}
+          >
+            <DashboardLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route
+          path="/platform/dashboard"
+          element={<SuperAdminDashboardPage />}
+        />
+
+        <Route
+          path="/platform/companies"
+          element={<CompaniesPage />}
+        />
+
+        {/* Sucursales de una empresa */}
+        <Route
+          path="/platform/companies/:companyId/branches"
+          element={<BranchesPage />}
+        />
+
+        {/* Compatibilidad con ruta anterior */}
+        <Route
+          path="/platform/branches"
+          element={
+            <Navigate to="/platform/companies" replace />
+          }
+        />
+
+        {/* Usuarios de plataforma */}
+        <Route
+          path="/platform/users"
+          element={<UsersPage />}
+        />
+      </Route>
+
+      {/* PANEL DE SUCURSAL */}
+      <Route
+        element={
+          <PrivateRoute scope="branch">
+            <DashboardLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute roles={BRANCH_ROLES}>
+              <DashboardPage />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/tables"
           element={
-            <PrivateRoute roles={[ROLES.ADMIN, ROLES.MESERO, ROLES.CAJERO]}>
+            <PrivateRoute
+              roles={[ROLES.ADMIN, ROLES.MESERO, ROLES.CAJERO]}
+            >
               <TablesPage />
             </PrivateRoute>
           }
@@ -85,7 +169,9 @@ export default function AppRoutes() {
         <Route
           path="/menu"
           element={
-            <PrivateRoute roles={[ROLES.ADMIN, ROLES.COCINA]}>
+            <PrivateRoute
+              roles={[ROLES.ADMIN, ROLES.COCINA]}
+            >
               <MenuPage />
             </PrivateRoute>
           }
@@ -94,7 +180,7 @@ export default function AppRoutes() {
         <Route
           path="/orders"
           element={
-            <PrivateRoute roles={Object.values(ROLES)}>
+            <PrivateRoute roles={BRANCH_ROLES}>
               <OrdersPage />
             </PrivateRoute>
           }
@@ -103,12 +189,15 @@ export default function AppRoutes() {
         <Route
           path="/payments"
           element={
-            <PrivateRoute roles={[ROLES.ADMIN, ROLES.CAJERO]}>
+            <PrivateRoute
+              roles={[ROLES.ADMIN, ROLES.CAJERO]}
+            >
               <PaymentsPage />
             </PrivateRoute>
           }
         />
 
+        {/* Usuarios de la sucursal */}
         <Route
           path="/users"
           element={
@@ -117,11 +206,10 @@ export default function AppRoutes() {
             </PrivateRoute>
           }
         />
-
       </Route>
 
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-
+      {/* RUTA DESCONOCIDA */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
