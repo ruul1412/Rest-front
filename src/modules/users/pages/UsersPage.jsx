@@ -1,11 +1,29 @@
+
 import UsersTable from "../components/UsersTable";
 import { useUsers } from "../hooks/useUsers";
 
 export default function UsersPage() {
   const {
-    users, loading, create, update, changeStatus, assignRole,
-    page, pageSize, total, setPage, setPageSize,
-  } = useUsers();
+  users,
+  loading,
+  create,
+  update,
+  changeStatus,
+  assignRole,
+  searchResults,
+  searching,
+  searchExistingUsers,
+  setSearchResults,
+  assignToBranch,
+  changeBranchRole,
+  page,
+  pageSize,
+  total,
+  setPage,
+  setPageSize,
+  changeBranchStatus
+} = useUsers();
+
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
@@ -18,6 +36,13 @@ export default function UsersPage() {
         onUpdate={update}
         onChangeStatus={changeStatus}
         onAssignRole={assignRole}
+        searchResults={searchResults}
+        searching={searching}
+        onSearchExisting={searchExistingUsers}
+        onClearSearch={() => setSearchResults([])}
+        onAssignToBranch={assignToBranch}
+        onChangeBranchRole={changeBranchRole}
+        onChangeBranchStatus={changeBranchStatus}
       />
 
       {(total > 0 || page > 1) && (
